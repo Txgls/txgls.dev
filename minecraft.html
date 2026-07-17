@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Togls - Minecraft Services & Development</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        :root {
+            --primary: #5cc56a;
+            --primary-dark: #2f9d3c;
+            --primary-light: #96e6a1;
+            --accent: #111111;
+            --white: #f8fffa;
+            --gray-900: #070a08;
+            --green-text: #8fe89c;
+            --radius: 8px;
+            --radius-lg: 16px;
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-light);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-width 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+            .custom-cursor::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 4px;
+                height: 4px;
+                background: var(--primary-light);
+                border-radius: 50%;
+                transition: width 0.3s ease, height 0.3s ease;
+            }
+
+            .custom-cursor.hover {
+                width: 50px;
+                height: 50px;
+                border-width: 1px;
+                background: rgba(0,164,166,0.1);
+            }
+
+                .custom-cursor.hover::before {
+                    width: 8px;
+                    height: 8px;
+                }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-900);
+            color: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(circle at 15% 12%, rgba(92,197,106,0.12), transparent 28%), radial-gradient(circle at 85% 10%, rgba(150,230,161,0.08), transparent 35%);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+
+            .nav.scrolled {
+                background: rgba(17, 17, 17, 0.95);
+                box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .nav-brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,164,166,0.3);
+        }
+
+        .nav-brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .nav-brand-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+            .nav-links a {
+                text-decoration: none;
+                color: rgba(255,255,255,0.7);
+                font-size: 0.95rem;
+                font-weight: 500;
+                transition: color 0.2s;
+                position: relative;
+            }
+
+                .nav-links a::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -4px;
+                    left: 0;
+                    width: 0;
+                    height: 2px;
+                    background: var(--primary);
+                    transition: width 0.3s ease;
+                }
+
+                .nav-links a:hover {
+                    color: var(--white);
+                }
+
+                    .nav-links a:hover::after {
+                        width: 100%;
+                    }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white) !important;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 12px rgba(0,164,166,0.3);
+        }
+
+            .nav-cta::after {
+                display: none !important;
+            }
+
+            .nav-cta:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0,164,166,0.4);
+            }
+
+        .nav-discord {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .nav-discord svg {
+                width: 20px;
+                height: 20px;
+                fill: currentColor;
+            }
+
+        .glitch-name {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -3px;
+            color: var(--primary-light);
+            text-shadow: 0 0 10px rgba(0,200,202,0.8), 0 0 20px rgba(0,200,202,0.6), 0 0 30px rgba(0,200,202,0.4);
+            animation: glitch 2s infinite;
+            z-index: 2;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), 2px 2px 0 rgba(255,0,0,0.5), -2px -2px 0 rgba(0,0,255,0.5);
+            }
+
+            14% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), 2px 2px 0 rgba(255,0,0,0.5), -2px -2px 0 rgba(0,0,255,0.5);
+            }
+
+            15% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), -2px -2px 0 rgba(255,0,0,0.5), 2px 2px 0 rgba(0,0,255,0.5);
+            }
+
+            49% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), -2px -2px 0 rgba(255,0,0,0.5), 2px 2px 0 rgba(0,0,255,0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), 2px -2px 0 rgba(255,0,0,0.5), -2px 2px 0 rgba(0,0,255,0.5);
+            }
+
+            99% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), 2px -2px 0 rgba(255,0,0,0.5), -2px 2px 0 rgba(0,0,255,0.5);
+            }
+
+            100% {
+                text-shadow: 0 0 10px rgba(0,200,202,0.8), 2px 2px 0 rgba(255,0,0,0.5), -2px -2px 0 rgba(0,0,255,0.5);
+            }
+        }
+
+        .hero {
+            padding: 240px 24px 80px;
+            text-align: center;
+            background: var(--gray-900);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hero::before {
+                content: '';
+                position: absolute;
+                top: -400px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 1000px;
+                height: 1000px;
+                background: radial-gradient(circle, rgba(0,164,166,0.15) 0%, transparent 60%);
+                pointer-events: none;
+                animation: pulse-glow 8s ease-in-out infinite;
+            }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translateX(-50%) scale(1.1);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,164,166,0.15);
+            border: 1px solid rgba(0,164,166,0.3);
+            color: var(--primary-light);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(0,200,202,0.7);
+            }
+
+            50% {
+                opacity: 0.5;
+                box-shadow: 0 0 0 8px rgba(0,200,202,0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -3px;
+            margin-bottom: 24px;
+            color: var(--white);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+            .hero h1 .highlight {
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+        .hero-sub {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.75);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .services-section {
+            padding: 80px 24px 70px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .service-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid rgba(150,230,161,0.24);
+            border-radius: var(--radius-lg);
+            padding: 42px 32px;
+            text-align: left;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .service-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at center, rgba(92,197,106,0.2), transparent 72%);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .service-card:hover {
+                transform: translateY(-8px);
+                background: rgba(255,255,255,0.08);
+                border-color: rgba(150,230,161,0.55);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            }
+
+                .service-card:hover::before {
+                    opacity: 1;
+                }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 0 24px;
+            background: rgba(92,197,106,0.2);
+            border: 2px solid rgba(150,230,161,0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: #ccffd3;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            color: var(--white);
+        }
+
+        .service-card p {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+        }
+
+        .skills-section {
+            padding: 60px 24px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary-light);
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.5);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .skill-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(150,230,161,0.2);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .skill-box::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, var(--primary), var(--primary-light));
+                transition: height 0.3s ease;
+            }
+
+            .skill-box:hover {
+                transform: translateY(-4px);
+                background: rgba(255,255,255,0.07);
+                border-color: rgba(150,230,161,0.45);
+                box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            }
+
+                .skill-box:hover::before {
+                    height: 6px;
+                }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .skill-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .skill-percentage {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .skill-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 15px rgba(0,164,166,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .skill-bar-fill::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 200%;
+            }
+        }
+
+        .plugins-section {
+            padding: 120px 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--gray-900);
+        }
+
+        .plugins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .plugin-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(150,230,161,0.22);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .plugin-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0,164,166,0.15), transparent 40%);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .plugin-card:hover {
+                transform: translateY(-8px);
+                background: rgba(255,255,255,0.08);
+                border-color: rgba(150,230,161,0.4);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            }
+
+                .plugin-card:hover::before {
+                    opacity: 1;
+                }
+
+        .plugin-card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .plugin-card:hover .plugin-card-accent {
+            height: 5px;
+        }
+
+        .accent-green {
+            background: linear-gradient(90deg, #2e7d32, #4caf50);
+        }
+
+        .accent-blue {
+            background: linear-gradient(90deg, #2c5aa0, #4a90e2);
+        }
+
+        .accent-purple {
+            background: linear-gradient(90deg, #6f42c1, #9b5de5);
+        }
+
+        .accent-orange {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
+
+        .accent-red {
+            background: linear-gradient(90deg, #8b5e3c, #c05621);
+        }
+
+        .plugin-card-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .plugin-card:hover .plugin-card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .plugin-card-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .icon-green {
+            background: rgba(0, 133, 90, 0.15);
+            border: 2px solid rgba(0, 133, 90, 0.3);
+        }
+
+            .icon-green svg {
+                fill: #4caf50;
+            }
+
+        .icon-blue {
+            background: rgba(26, 86, 219, 0.15);
+            border: 2px solid rgba(26, 86, 219, 0.3);
+        }
+
+            .icon-blue svg {
+                fill: #4a90e2;
+            }
+
+        .icon-purple {
+            background: rgba(111, 66, 193, 0.15);
+            border: 2px solid rgba(111, 66, 193, 0.3);
+        }
+
+            .icon-purple svg {
+                fill: #9b5de5;
+            }
+
+        .icon-orange {
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+            .icon-orange svg {
+                fill: #f97316;
+            }
+
+        .icon-red {
+            background: rgba(192, 86, 33, 0.15);
+            border: 2px solid rgba(192, 86, 33, 0.3);
+        }
+
+            .icon-red svg {
+                fill: #c05621;
+            }
+
+        .plugin-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plugin-card-sub {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 16px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plugin-card-desc {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+        }
+
+        .card-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--white);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-btn-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .plugin-card:hover .card-btn-arrow {
+            transform: translateX(6px);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            box-shadow: 0 4px 12px rgba(0, 133, 90, 0.3);
+        }
+
+            .btn-green:hover {
+                box-shadow: 0 6px 20px rgba(0, 133, 90, 0.5);
+            }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #2c5aa0, #4a90e2);
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3);
+        }
+
+            .btn-blue:hover {
+                box-shadow: 0 6px 20px rgba(26, 86, 219, 0.5);
+            }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #6f42c1, #9b5de5);
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+        }
+
+            .btn-purple:hover {
+                box-shadow: 0 6px 20px rgba(111, 66, 193, 0.5);
+            }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+            .btn-orange:hover {
+                box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            }
+
+        .btn-red {
+            background: linear-gradient(135deg, #8b5e3c, #c05621);
+            box-shadow: 0 4px 12px rgba(192, 86, 33, 0.3);
+        }
+
+            .btn-red:hover {
+                box-shadow: 0 6px 20px rgba(192, 86, 33, 0.5);
+            }
+
+        .cta-section {
+            padding: 120px 24px;
+            text-align: center;
+            background: var(--gray-900);
+            position: relative;
+        }
+
+            .cta-section::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at center, rgba(0,164,166,0.08) 0%, transparent 70%);
+            }
+
+        .cta-inner {
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .cta-discord {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #5865F2;
+            color: var(--white);
+            padding: 16px 40px;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(88,101,242,0.3);
+        }
+
+            .cta-discord:hover {
+                background: #4752C4;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 30px rgba(88,101,242,0.5);
+            }
+
+            .cta-discord svg {
+                width: 22px;
+                height: 22px;
+                fill: white;
+            }
+
+        .footer {
+            background: rgba(0,0,0,0.4);
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .footer-brand-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .footer-copy {
+            color: rgba(255,255,255,0.35);
+            font-size: 0.85rem;
+        }
+
+            .footer-copy a {
+                color: var(--primary-light);
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
+
+                .footer-copy a:hover {
+                    color: var(--primary);
+                }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+            .footer-links a {
+                color: rgba(255,255,255,0.5);
+                text-decoration: none;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: color 0.2s;
+            }
+
+                .footer-links a:hover {
+                    color: var(--white);
+                }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .fade-up.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        @media (max-width: 1024px) {
+            .plugins-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 180px 20px 60px;
+            }
+
+            .glitch-name {
+                font-size: 2.5rem;
+                top: 90px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plugins-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: none;
+            padding: 8px;
+        }
+
+            .mobile-menu-btn span {
+                display: block;
+                width: 24px;
+                height: 2px;
+                background: var(--white);
+                margin: 5px 0;
+                border-radius: 2px;
+                transition: all 0.3s ease;
+            }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <div class="nav-brand-icon"><img src="txgls.png" alt="Txgls"></div>
+                <span class="nav-brand-text">Txgls Dev</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#plugins">Plugins</a></li>
+                <li>
+                    <a href="https://discord.gg/4cV7Tu7ESu" target="_blank" class="nav-discord">
+                        <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" /></svg>
+                        Discord
+                    </a>
+                </li>
+                <li><a href="#contact" class="nav-cta">Get Started</a></li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="glitch-name">MINECRAFT</div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Signature Minecraft Engineering
+            </div>
+            <h1>Build a <span class="highlight">Minecraft World</span> Players Stay In</h1>
+            <p class="hero-sub">
+                I design and ship complete gameplay ecosystems with custom plugins, progression loops, and live-ops systems that convert one-time visitors into a long-term community.
+            </p>
+        </div>
+    </section>
+
+    <section class="services-section" id="services">
+        <div class="services-grid">
+            <div class="service-card fade-up">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                </div>
+                <h3>Gameplay Systems</h3>
+                <p>From classes and combat kits to social economies, every mechanic is designed to feel coherent, rewarding, and scalable.</p>
+            </div>
+
+            <div class="service-card fade-up">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                </div>
+                <h3>Core Infrastructure</h3>
+                <p>Robust architecture, clean persistence, and performance profiling to keep gameplay smooth under real player load.</p>
+            </div>
+
+            <div class="service-card fade-up">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+                </div>
+                <h3>Live Content Ops</h3>
+                <p>Seasonal updates, balancing passes, and feature cadence planning so your server never feels static or stale.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills-section" id="skills">
+        <div class="section-header">
+            <span class="section-label">Execution Depth</span>
+            <h2>What You Get In Every Build</h2>
+            <p>Every project is structured around retention, stability, and maintainable long-term growth.</p>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-box fade-up" data-skill="staff">
+                <div class="skill-header">
+                    <span class="skill-name">Custom Systems Architecture</span>
+                    <span class="skill-percentage">100%</span>
+                </div>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" data-width="100"></div>
+                </div>
+            </div>
+
+            <div class="skill-box fade-up" data-skill="community">
+                <div class="skill-header">
+                    <span class="skill-name">Player Retention Design</span>
+                    <span class="skill-percentage">94%</span>
+                </div>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" data-width="94"></div>
+                </div>
+            </div>
+
+            <div class="skill-box fade-up" data-skill="development">
+                <div class="skill-header">
+                    <span class="skill-name">Plugin Engineering</span>
+                    <span class="skill-percentage">100%</span>
+                </div>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" data-width="100"></div>
+                </div>
+            </div>
+
+            <div class="skill-box fade-up" data-skill="security">
+                <div class="skill-header">
+                    <span class="skill-name">Performance Optimization</span>
+                    <span class="skill-percentage">96%</span>
+                </div>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" data-width="96"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="plugins-section" id="plugins">
+        <div class="section-header">
+            <span class="section-label">Resources</span>
+            <h2>Documentation & Plugins</h2>
+            <p>Access comprehensive documentation and browse all available Minecraft plugins.</p>
+        </div>
+        <div class="plugins-grid">
+            <a href="https://docs.txgls.dev" target="_blank" class="plugin-card fade-up">
+                <div class="plugin-card-accent accent-blue"></div>
+                <div class="plugin-card-icon icon-blue">
+                    <svg viewBox="0 0 24 24"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" /></svg>
+                </div>
+                <h3>Documentation</h3>
+                <span class="plugin-card-sub">docs.txgls.dev</span>
+                <p class="plugin-card-desc">Comprehensive documentation covering installation guides, configuration references, and API documentation for all projects.</p>
+                <button class="card-btn btn-blue">View Docs <span class="card-btn-arrow">→</span></button>
+            </a>
+
+            <a href="https://www.spigotmc.org/resources/authors/txgls.2151178/" target="_blank" class="plugin-card fade-up">
+                <div class="plugin-card-accent accent-green"></div>
+                <div class="plugin-card-icon icon-green">
+                    <svg viewBox="0 0 24 24"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6l9-4z" /></svg>
+                </div>
+                <h3>SpigotMC Profile</h3>
+                <span class="plugin-card-sub">Plugin Repository</span>
+                <p class="plugin-card-desc">Browse all published Minecraft plugins, download releases, view ratings, and access community discussions on SpigotMC.</p>
+                <button class="card-btn btn-green">Visit Profile <span class="card-btn-arrow">→</span></button>
+            </a>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="cta-inner">
+            <h2>Ready to Launch Something Better?</h2>
+            <p>Message me on Discord with your concept, current stack, and goals. I can help shape the roadmap and deliver the systems behind it.</p>
+            <a href="https://discord.gg/4cV7Tu7ESu" target="_blank" class="cta-discord">
+                <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" /></svg>
+                Start a Minecraft Project
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-brand-icon"><img src="txgls.png" alt="Txgls"></div>
+                <span class="footer-brand-name">Txgls Dev</span>
+            </div>
+            <p class="footer-copy">&copy; 2026 <a href="#">Togls</a>. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#plugins">Plugins</a></li>
+                <li><a href="https://discord.gg/4cV7Tu7ESu" target="_blank">Discord</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.custom-cursor');
+        const hoverableElements = document.querySelectorAll('a, button, .plugin-card, .service-card, .skill-box');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        hoverableElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    if (entry.target.dataset.skill) {
+                        const skillBar = entry.target.querySelector('.skill-bar-fill');
+                        setTimeout(() => {
+                            skillBar.style.width = skillBar.dataset.width + '%';
+                        }, 200);
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+        document.querySelectorAll('.plugin-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>
